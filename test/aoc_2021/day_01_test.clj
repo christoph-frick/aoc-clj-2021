@@ -15,9 +15,9 @@
    263])
 
 (deftest test-count-increasing
-  (is (= 7 (sut/count-increasing test-data))))
+  (is (= 7 (sut/count-increasing 1 test-data))))
 
 (deftest test-solution
   (are [f r] (= r (f))
     sut/part-1 1548
-    sut/part-2 nil))
+    sut/part-2 1589))

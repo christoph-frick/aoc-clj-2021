@@ -3,19 +3,26 @@
             [aoc.convert :as c]))
 
 (defn count-increasing
-  [xs]
+  [window-size xs]
   (->> xs
+       (partition window-size 1)
+       (map (partial apply +))
        (partition 2 1)
        (filter (partial apply <))
        (count)))
 
+(defn part
+  [window-size]
+  (count-increasing
+   window-size
+   (->> "day/01/input.txt"
+        (file/read-lines)
+        (map c/stol))))
+
 (defn part-1
   []
-  (->> "day/01/input.txt"
-       (file/read-lines)
-       (map c/stol)
-       (count-increasing)))
+  (part 1))
 
 (defn part-2
-    []
-    )
+  []
+  (part 3))
