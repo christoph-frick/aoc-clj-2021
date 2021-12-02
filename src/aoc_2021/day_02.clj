@@ -1,30 +1,12 @@
 (ns aoc-2021.day-02
   (:require [aoc.file :as file]
-            [aoc.convert :as c]
-            [clojure.string :as str]))
+            [aoc.convert :as c]))
 
-(defn pos
+(defn state
   ([]
-   (pos 0 0))
-  ([x y]
-   {:x x :y y}))
-
-(defn forward
-  [pos ofs]
-  (update pos :x + ofs))
-
-(defn up
-  [pos ofs]
-  (update pos :y - ofs))
-
-(defn down
-  [pos ofs]
-  (update pos :y + ofs))
-
-(def instrs
-  {"forward" forward
-   "up" up
-   "down" down})
+   (state 0 0 0))
+  ([x y aim]
+   {:x x :y y :aim aim}))
 
 (defn parse-step
   [s]
@@ -32,24 +14,52 @@
     [instr (c/stol ofs)]))
 
 (defn step
-  [pos [instr ofs]]
-  ((instrs instr) pos ofs))
+  [instrs state [instr ofs]]
+  ((instrs instr) state ofs))
 
 (defn run
-  ([steps] (run steps (pos)))
-  ([steps pos]
-   (reduce step pos steps)))
+  ([instrs steps] (run instrs steps (state)))
+  ([instrs steps state]
+   (reduce (partial step instrs) state steps)))
+
+(def instrs-part-1
+  {"forward" (fn forward-1
+               [state ofs]
+               (update state :x + ofs))
+   "up" (fn up-1
+          [state ofs]
+          (update state :y - ofs))
+   "down" (fn down-1
+            [state ofs]
+            (update state :y + ofs))})
+
+(def instrs-part-2
+  {"forward" (fn forward-2
+               [{:keys [aim] :as state} ofs]
+               (-> state
+                   (update :x + ofs)
+                   (update :y + (* aim ofs))))
+   "up" (fn up-2
+          [state ofs]
+          (update state :aim - ofs))
+   "down" (fn down-2
+            [state ofs]
+            (update state :aim + ofs))})
 
 (def input "day/02/input.txt")
 
-(defn part-1
-  []
+(defn part
+  [instrs]
   (let [{:keys [x y]} (->> input
                            (file/read-lines)
                            (map parse-step)
-                           (run))]
+                           (run instrs))]
     (* x y)))
+
+(defn part-1
+  []
+  (part instrs-part-1))
 
 (defn part-2
   []
-  nil)
+  (part instrs-part-2))

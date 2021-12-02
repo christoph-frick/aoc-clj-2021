@@ -8,8 +8,8 @@
     ["forward" 5] "forward 5"))
 
 (deftest test-step
-  (are [result step] (= result (->> step sut/parse-step (sut/step (sut/pos))))
-    {:x 1 :y 0} "forward 1"))
+  (are [result step] (= result (->> step sut/parse-step (sut/step sut/instrs-part-1 (sut/state))))
+    {:x 1 :y 0 :aim 0} "forward 1"))
 
 (def input
     "forward 5
@@ -20,10 +20,13 @@ down 8
 forward 2")
 
 (deftest test-run
-  (is (= {:x 15 :y 10} (sut/run (map sut/parse-step (str/split-lines input))))))
+  (are [result instrs] (= result (sut/run instrs (map sut/parse-step (str/split-lines input))))
+    {:x 15 :y 10 :aim 0} sut/instrs-part-1
+    {:x 15 :y 60 :aim 10} sut/instrs-part-2))
+
 
 (deftest test-part-1
   (is (= 2091984 (sut/part-1))))
 
-(deftest ^:kaocha/pending test-part-2
-  (is (= 42 (sut/part-2))))
+(deftest test-part-2
+  (is (= 2086261056 (sut/part-2))))
