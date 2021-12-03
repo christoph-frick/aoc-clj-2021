@@ -29,8 +29,16 @@
 (deftest test-solution-1
   (is (= 198 (sut/solution-1 test-data))))
 
+(deftest test-bit-criteria
+  (are [result f] (= result (f test-data))
+    "10111" sut/find-o2
+    "01010" sut/find-co2))
+
+(deftest test-solution-2
+  (is (= 230 (sut/solution-2 test-data))))
+
 (deftest test-part-1
   (is (= 3633500 (sut/part-1))))
 
-(deftest ^:kaocha/pending test-part-2
-  (is (= 42 (sut/part-2))))
+(deftest test-part-2
+  (is (= 4550283 (sut/part-2))))

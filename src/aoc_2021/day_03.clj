@@ -35,6 +35,32 @@
         epsilon (epsilon-from-gamma gamma)]
     (* (c/btol gamma) (c/btol epsilon))))
 
+(defn bit-criteria
+  [rating-fn fallback xs]
+  (loop [pos 0
+         xs xs]
+    (let [freqs (group-by #(nth % pos) xs)
+          [count0 count1] (mapv #(count (get freqs % [])) [\0 \1])
+          next-key (if (= count0 count1)
+                     fallback
+                     (if (rating-fn count0 count1)
+                       \0
+                       \1))
+          xs' (get freqs next-key)]
+      (if (= 1 (count xs'))
+        (first xs')
+        (recur (inc pos) xs')))))
+
+(def find-o2
+  (partial bit-criteria > \1))
+
+(def find-co2
+  (partial bit-criteria < \0))
+
+(defn solution-2
+  [xs]
+  (apply * (map #(c/btol (% xs)) [find-o2 find-co2])))
+
 (def input "day/03/input.txt")
 
 (defn part-1
@@ -45,4 +71,6 @@
 
 (defn part-2
   []
-  nil)
+  (-> input
+      (file/read-lines)
+      (solution-2)))
