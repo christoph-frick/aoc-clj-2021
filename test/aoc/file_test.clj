@@ -5,3 +5,6 @@
 (deftest test-read-lines
   (is (= ["a" "b" "c"]
          (sut/read-lines "test.txt"))))
+
+(deftest test-read
+  (is (= "a\nb\nc\n" (sut/read "test.txt"))))

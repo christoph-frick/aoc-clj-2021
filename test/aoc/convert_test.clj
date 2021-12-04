@@ -7,3 +7,11 @@
 
 (deftest test-btol
   (is (= 5 (sut/btol "0101"))))
+
+(deftest test-split-groups
+  (is (= ["a" "b"] (sut/split-groups "a\n\nb\n"))))
+
+(deftest test-read-array
+  (are [result s] (= result (sut/read-array s))
+    [1 2 3] "1 2 3"
+    [1 2 3] "1,2,3"))
