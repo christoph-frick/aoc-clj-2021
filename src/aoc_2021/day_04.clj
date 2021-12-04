@@ -35,26 +35,40 @@
 
 (defn run
   [game]
-  (loop
-   [{:keys [numbers boards] :as game} game]
-    (let [[number & numbers'] numbers
-          boards' (map #(mark-number % number) boards)
-          winner (first (filter winner? boards'))]
-      (if winner
-        [number winner]
-        (recur (assoc game
-                      :numbers numbers'
-                      :boards boards'))))))
+  (reduce
+   (fn step [{:keys [boards winners] :as game} number]
+     (let [boards' (map #(mark-number % number) boards)
+           winners-and-losers (group-by winner? boards')
+           [new-winners losers] (map #(get winners-and-losers % []) [true false])
+           game' (assoc game
+                        :boards losers
+                        :winners (into winners (map (partial vector number) new-winners)))]
+       (if (empty? losers)
+         (reduced game')
+         game')))
+   game
+   (:numbers game)))
+
+(defn non-drawn-numbers
+  [board]
+  (->> board
+       vals
+       (filter (complement :drawn?))
+       (map :number)))
+
+(defn solution
+  [picker-fn s]
+  (let [game (run (parse-game s))
+        [number winner] (-> game :winners picker-fn)]
+    (* number (apply + (non-drawn-numbers winner)))))
 
 (defn solution-1
   [s]
-  (let [game (parse-game s)
-        [number winner] (run game)
-        non-drawn-numbers (->> winner
-                               vals
-                               (filter (complement :drawn?))
-                               (map :number))]
-    (* number (apply + non-drawn-numbers))))
+  (solution first s))
+
+(defn solution-2
+  [s]
+  (solution last s))
 
 (def input "day/04/input.txt")
 
@@ -64,4 +78,4 @@
 
 (defn part-2
   []
-  nil)
+  (solution-2 (file/read input)))

@@ -75,15 +75,17 @@
     (is (true? (sut/winner? run)))))
 
 (deftest test-run
-  (let [game (sut/parse-game test-input)
-        [number _] (sut/run game)]
-    (is (= 24 number))))
+  (let [game (sut/run (sut/parse-game test-input))]
+    (is (= 24 (-> game :winners ffirst)))))
 
 (deftest test-solution-1
   (is (= 4512 (sut/solution-1 test-input))))
 
+(deftest test-solution-2
+  (is (= 1924 (sut/solution-2 test-input))))
+
 (deftest test-part-1
   (is (= 38594 (sut/part-1))))
 
-(deftest ^:kaocha/pending test-part-2
-  (is (= 42 (sut/part-2))))
+(deftest test-part-2
+  (is (= 21184 (sut/part-2))))
