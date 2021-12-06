@@ -20,10 +20,11 @@
 (deftest test-solution-1
   (are [result days] (= result (sut/solution-1 [3,4,3,1,2] days))
     26 18
-    5934 80))
+    5934 80
+    26984457539 256))
 
 (deftest test-part-1
-  (is (= 42 (sut/part-1))))
+  (is (= 355386 (sut/part-1))))
 
-(deftest ^:kaocha/pending test-part-2
-  (is (= 42 (sut/part-2))))
+(deftest test-part-2
+  (is (= 1613415325809 (sut/part-2))))

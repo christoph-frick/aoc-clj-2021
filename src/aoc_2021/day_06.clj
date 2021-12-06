@@ -35,13 +35,17 @@
 
 (def input "day/06/input.txt")
 
-(defn part-1
-  []
+(defn part
+  [days]
   (-> input
       (file/read)
       (c/read-array)
-      (solution-1 80)))
+      (solution-1 days)))
+
+(defn part-1
+  []
+  (part 80))
 
 (defn part-2
   []
-  nil)
+  (part 256))
