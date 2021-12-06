@@ -1,1 +1,1 @@
-resources/*.txt	-diff
+resources/**/*.txt	-diff
