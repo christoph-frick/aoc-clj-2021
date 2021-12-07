@@ -26,14 +26,9 @@
      (update ground pos (fnil inc 0)))
    ground
    (let [[dx dy] (dir s e)
-         inc (fn [[x y]] [(+ x dx) (+ y dy)])]
-     (reductions (fn [pos _]
-                   (let [pos' (inc pos)]
-                     (if (= pos' e)
-                       (reduced pos')
-                       pos')))
-                 s
-                 (range)))))
+         inc (fn [[x y]] [(+ x dx) (+ y dy)])
+         e+1 (inc e)]
+     (take-while (partial not= e+1) (iterate inc s)))))
 
 (defn count-overlaps
   [ground]
