@@ -29,27 +29,29 @@
 
 (defn solution
   [{:keys [inputs] :as puzzle}]
-  (let [solution (reduce (fn [{:keys [inputs solution]} [nr f]]
-                           (let [split (group-by (partial f solution) inputs)]
-                             {:inputs (split false)
-                              :solution (assoc solution nr (first (split true)))}))
-                         {:inputs inputs
+  (let [steps [1 (cnt-pred 2)
+               7 (cnt-pred 3)
+               4 (cnt-pred 4)
+               8 (cnt-pred 7)
+               9 (cnt-mask-cnt-pred 6 4 2)
+               2 (cnt-mask-cnt-pred 5 4 3)
+               3 (cnt-mask-cnt-pred 5 1 3)
+               5 (cnt-mask-cnt-pred 5 1 4)
+               0 (cnt-mask-cnt-pred 6 1 4)
+               6 (cnt-mask-cnt-pred 6 1 5)]
+
+        solve-fn (fn [{:keys [inputs solution] :as acc} [nr pred]]
+                   (let [input (first (filter (partial pred solution) inputs))]
+                     (-> acc
+                         (update :inputs disj input)
+                         (update :solution assoc nr input))))
+
+        solution (reduce solve-fn
+                         {:inputs (into #{} inputs)
                           :solution {}}
-                         (partition 2 [1 (cnt-pred 2)
-                                       7 (cnt-pred 3)
-                                       4 (cnt-pred 4)
-                                       8 (cnt-pred 7)
-                                       9 (cnt-mask-cnt-pred 6 4 2)
-                                       2 (cnt-mask-cnt-pred 5 4 3)
-                                       3 (cnt-mask-cnt-pred 5 1 3)
-                                       5 (cnt-mask-cnt-pred 5 1 4)
-                                       0 (cnt-mask-cnt-pred 6 1 4)
-                                       6 (cnt-mask-cnt-pred 6 1 5)]))]
+                         (partition 2 steps))]
     (assoc puzzle
-           :solution (into {}
-                           (map (fn [[k v]]
-                                  [v k]))
-                           (:solution solution)))))
+           :solution (set/map-invert (:solution solution)))))
 
 (defn number
   [{:keys [solution number]}]
