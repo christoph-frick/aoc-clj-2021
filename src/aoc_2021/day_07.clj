@@ -10,23 +10,36 @@
           xs))
 
 (defn dist
-    [a b]
-    (Math/abs (- b a)))
+  [a b]
+  (Math/abs (- b a)))
+
+(defn half
+  [x]
+  (bit-shift-right x 1))
 
 (defn triangular
   [a b]
   (let [n (dist a b)]
-    (bit-shift-right (* n (inc n)) 1)))
+    (half (* n (inc n)))))
 
 (defn optimize1
   [cost-fn xs center]
-  (apply + (map (partial cost-fn center) xs)))
+  (transduce (map (partial cost-fn center)) + 0 xs))
 
 (defn optimize
   [cost-fn xs]
-  (let [[xmin xmax] (min-max xs)
-        attempts (into {} (map #(vector % (optimize1 cost-fn xs %))) (range xmin (inc xmax)))]
-    (apply min-key val attempts)))
+  (let [[xmin xmax] (min-max xs)]
+    (loop [l xmin
+           r (inc xmax)]
+      (let [c (+ l (half (- r l)))
+            [fl fc fr] (map (partial optimize1 cost-fn xs) [l c r])]
+        (if (or (= l c) (= c r))
+          (if (< fl fr)
+            [l fl]
+            [r fr])
+          (if (< (+ fl fc) (+ fc fr))
+            (recur l c)
+            (recur c r)))))))
 
 (def input "day/07/input.txt")
 
@@ -36,7 +49,7 @@
        (file/read)
        (c/read-array)
        (optimize cost-fn)
-       (val)))
+       (second)))
 
 (defn part-1
   []
