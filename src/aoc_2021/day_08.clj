@@ -14,18 +14,22 @@
   [s]
   (map parse-line (str/split-lines s)))
 
+(defn cnt=?
+  [xs n]
+  (= (count xs) n))
+
 (defn cnt-pred
   [x]
   (fn [_ input]
-    (= x (count input))))
+    (cnt=? input x)))
 
 (defn cnt-mask-cnt-pred
   [initial-count mask count-after-mask]
   (fn [solution input]
     (let [to-mask (solution mask)]
       (and
-       (= initial-count (count input))
-       (= count-after-mask (count (set/difference input to-mask)))))))
+       (cnt=? input initial-count)
+       (cnt=? (set/difference input to-mask) count-after-mask)))))
 
 (defn solution
   [{:keys [inputs] :as puzzle}]
