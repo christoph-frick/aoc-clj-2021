@@ -82,7 +82,7 @@
   [s]
   (->> s
        (parse)
-       (map (comp number solution))
+       (map solve)
        (apply +)))
 
 (def input "day/08/input.txt")
