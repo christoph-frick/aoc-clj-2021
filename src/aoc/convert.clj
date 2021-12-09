@@ -7,6 +7,11 @@
     [s]
     (Long/parseLong s))
 
+(defn ctol
+  "Character to long base 10"
+  [c]
+  (Character/digit c 10))
+
 (defn btol
     "String to long base 2"
     [s]

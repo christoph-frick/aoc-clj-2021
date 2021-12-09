@@ -8,6 +8,9 @@
 (deftest test-btol
   (is (= 5 (sut/btol "0101"))))
 
+(deftest test-ctol
+  (is (= [1 2 3] (map sut/ctol "123"))))
+
 (deftest test-split-groups
   (is (= ["a" "b"] (sut/split-groups "a\n\nb\n"))))
 
