@@ -38,8 +38,14 @@
 (deftest test-solution-1
   (is (= 26397 (sut/solution-1 data))))
 
+(deftest test-rate-incomplete
+  (is (= 288957 (sut/rate (sut/check "[({(<(())[]>[[{[]{<()<>>")))))
+
+(deftest test-solution-2
+  (is (= 288957 (sut/solution-2 data))))
+
 (deftest test-part-1
   (is (= 168417 (sut/part-1))))
 
-(deftest ^:kaocha/pending test-part-2
-  (is (= 42 (sut/part-2))))
+(deftest test-part-2
+  (is (= 2802519786 (sut/part-2))))

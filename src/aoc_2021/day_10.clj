@@ -32,22 +32,54 @@
             (recur (pop open) cs)
             [:illegal c]))))))
 
-(def rating
+(def rating-illegal
   {\) 3
    \] 57
    \} 1197
    \> 25137})
 
-(defn solution-1
-  [s]
+(def rating-incomplete
+  {\) 1
+   \] 2
+   \} 3
+   \> 4})
+
+(defmulti rate first)
+
+(defmethod rate :illegal
+  [[_ c]]
+  (rating-illegal c))
+
+(defmethod rate :incomplete
+  [[_ cs]]
+  (reduce #(+ (* 5 %1) %2)
+          0
+          (map rating-incomplete cs)))
+
+(defn status-pred
+  [status]
+  (fn [[e]]
+    (= status e)))
+
+(defn solution
+  [reducer init status s]
   (transduce
    (comp (map check)
-         (filter (fn [[e & _]] (= :illegal e)))
-         (map second)
-         (map rating))
-   +
-   0
+         (filter (status-pred status))
+         (map rate))
+   reducer
+   init
    (parse s)))
+
+(defn solution-1
+  [s]
+  (solution + 0 :illegal s))
+
+(defn solution-2
+  [s]
+  (let [results (sort (solution conj [] :incomplete s))
+        idx (bit-shift-right (count results) 1)]
+    (nth results idx)))
 
 (def input "day/10/input.txt")
 
@@ -57,4 +89,4 @@
 
 (defn part-2
   []
-  nil)
+  (solution-2 (file/read input)))
