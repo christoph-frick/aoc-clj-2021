@@ -31,14 +31,18 @@
   [pos]
   (map (partial add pos) neighbour-coords))
 
+(defn low-point?
+  [points p]
+  (every? (partial < (points p))
+          (->> (neighbours p)
+               (map points)
+               (remove nil?))))
+
 (defn find-low-points
   [{:keys [points]}]
   (into {}
-        (filter (fn [[p _]]
-                  (every? (partial < (points p)) (->> (neighbours p)
-                                                      (map points)
-                                                      (remove nil?))))
-                points)))
+        (filter #(low-point? points (key %)))
+        points))
 
 (defn find-basin
   [{:keys [points]} low-point]
@@ -51,11 +55,10 @@
         result
         (let [result' (set/union result todo)
               todo' (set/difference
-                     (->> todo
-                          (mapcat neighbours)
-                          (set)
-                          (filter is-basin?)
-                          (set))
+                     (into #{}
+                           (comp (mapcat neighbours)
+                                 (filter is-basin?))
+                           todo)
                      result')]
           (recur result' todo'))))))
 
