@@ -2,7 +2,8 @@
   (:require [aoc.file :as file]
             [aoc.convert :as c]
             [clojure.string :as str]
-            [clojure.set :as set]))
+            [clojure.set :as set]
+            [aoc.pos2d :as pos]))
 
 (defn parse
   [s]
@@ -20,21 +21,10 @@
                          x (range width)]
                      [[x y] (get-in m [y x])]))}))
 
-(defn add
-  [[x y] [s t]]
-  [(+ x s) (+ y t)])
-
-(def neighbour-coords
-  [[-1 0] [1 0] [0 -1] [0 1]])
-
-(defn neighbours
-  [pos]
-  (map (partial add pos) neighbour-coords))
-
 (defn low-point?
   [points p]
   (every? (partial < (points p))
-          (->> (neighbours p)
+          (->> (pos/neighbours-4 p)
                (map points)
                (remove nil?))))
 
@@ -56,7 +46,7 @@
         (let [result' (set/union result todo)
               todo' (set/difference
                      (into #{}
-                           (comp (mapcat neighbours)
+                           (comp (mapcat pos/neighbours-4)
                                  (filter is-basin?))
                            todo)
                      result')]

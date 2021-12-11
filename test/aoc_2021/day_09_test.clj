@@ -25,13 +25,6 @@
     (is (contains? points [0 0]))
     (is (= (->> data (re-seq #"\d") (frequencies)) (frequencies (map str (vals points)))))))
 
-(deftest test-neightbours
-  (is (= #{[41 666]
-           [43 666]
-           [42 665]
-           [42 667]}
-         (set (sut/neighbours [42 666])))))
-
 (deftest test-find-low-points
   (is (= {[1 0] 1,
           [2 2] 5,
