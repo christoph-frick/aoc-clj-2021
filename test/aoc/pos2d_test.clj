@@ -21,3 +21,14 @@
                    [1 0] \b
                    [0 1] \c
                    [1 1] \d}} (sut/coord-map ["ab" "cd"]))))
+
+(deftest test-coords-to-sorted-nested
+  (are [result input] (= result (sut/coords-to-sorted-nested input))
+    {0 {0 \a
+        1 \b}
+     1 {0 \c
+        1 \d}}
+    {[0 0] \a
+     [1 0] \b
+     [0 1] \c
+     [1 1] \d}))

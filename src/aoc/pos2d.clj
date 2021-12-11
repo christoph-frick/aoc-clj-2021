@@ -36,3 +36,9 @@
                          x (range width)]
                      [[x y] (get-in rows [y x])]))}))
 
+(defn coords-to-sorted-nested
+  [m]
+  (reduce (fn [acc [x y :as pos]]
+            (update acc y (fnil assoc (sorted-map)) x (m pos)))
+          (sorted-map)
+          (keys m)))
