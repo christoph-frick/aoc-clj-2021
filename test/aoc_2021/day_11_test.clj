@@ -46,7 +46,7 @@
                  (vals (pos/coords-to-sorted-nested m)))))
 
 (deftest test-step
-  (are [input result] (= result (-> input sut/parse sut/step first fmt))
+  (are [input result] (= result (-> input sut/parse sut/step fmt))
     "11111
 19991
 19191
@@ -59,12 +59,15 @@
 34543"))
 
 (deftest test-run
-  (are [flashes steps] (= flashes (-> test-data sut/parse (sut/run steps) second))
+  (are [flashes steps] (= flashes (-> test-data sut/parse (sut/count-flashes steps)))
     204 10
     1656 100))
+
+(deftest test-optimal-step
+  (is (= 195 (-> test-data sut/parse sut/optimal-step))))
 
 (deftest test-part-1
   (is (= 1644 (sut/part-1))))
 
-(deftest ^:kaocha/pending test-part-2
-  (is (= 42 (sut/part-2))))
+(deftest test-part-2
+  (is (= 229 (sut/part-2))))

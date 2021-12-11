@@ -38,18 +38,32 @@
 
 (defn step
   [m]
-  (let [m' (reduce step-pos m (keys m))
-        flash-count (count (filter gt9? (vals m')))
-        clean-m (zipmap (keys m') (map flip (vals m')))]
-    [clean-m flash-count]))
+  (let [m' (reduce step-pos m (keys m))]
+    (zipmap (keys m') (map flip (vals m')))))
 
-(defn run
+(defn flash-count
+  [m]
+  (count (filter zero? (vals m))))
+
+(defn count-flashes
   [m steps]
-  (reduce (fn [[m cnt] _]
-            (let [[m' cnt'] (step m)]
-              [m' (+ cnt cnt')]))
-          [m 0]
-          (range steps)))
+  (->> (iterate step m)
+       (drop 1)
+       (take steps)
+       (map flash-count)
+       (apply +)))
+
+(defn optimal?
+  [m]
+  (= 100 (flash-count m)))
+
+(defn optimal-step
+  [m]
+  (loop [m (step m)
+         s 1]
+    (if (optimal? m)
+      s
+      (recur (step m) (inc s)))))
 
 (def input "day/11/input.txt")
 
@@ -58,9 +72,11 @@
   (-> input
       (file/read)
       (parse)
-      (run 100)
-      (second)))
+      (count-flashes 100)))
 
 (defn part-2
   []
-  nil)
+  (-> input
+      (file/read)
+      (parse)
+      (optimal-step)))
