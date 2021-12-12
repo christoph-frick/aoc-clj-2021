@@ -38,8 +38,8 @@ b-end")
     false "Error"))
 
 (deftest test-childs-single-visit-strategy
-  (let [strat (sut/->SingleVisitBlockingStrategy)]
-    (are [result tree blocked n] (= result (set (sut/childs strat tree blocked n)))
+  (let [strat (sut/->SingleVisitDescendStrategy)]
+    (are [result tree blocked n] (= result (set (sut/childs strat blocked tree n)))
       #{["A" #{"start"}]
         ["b" #{"start"}]}
       {"start" #{"A" "b"}}
@@ -65,7 +65,8 @@ b-end")
          (->> test-data
               (sut/parse)
               (sut/to-adj-map)
-              (sut/breadth-first-all (sut/->SingleVisitBlockingStrategy))))))
+              (sut/breadth-first-all (sut/->SingleVisitDescendStrategy))))))
+
 (def test-data-2
   "dc-end
 HN-start
