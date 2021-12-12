@@ -37,39 +37,37 @@ b-end")
     false "A"
     false "Error"))
 
-(deftest test-block
-  (are [result n] (= result (sut/block #{} n))
-    #{"start"} "start"
-    #{} "A"))
+(deftest test-childs-single-visit-strategy
+  (let [strat (sut/->SingleVisitBlockingStrategy)]
+    (are [result tree blocked n] (= result (set (sut/childs strat tree blocked n)))
+      #{["A" #{"start"}]
+        ["b" #{"start"}]}
+      {"start" #{"A" "b"}}
+      #{}
+      "start"
 
-(deftest test-childs
-  (are [result tree blocked n] (= result (sut/childs tree blocked n))
-    #{"A" "b"} {"start" #{"A" "b"}} #{} "start"
-    #{"A"} {"start" #{"A" "b"}} #{"b"} "start"))
+      #{["A" #{"start" "b"}]}
+      {"start" #{"A" "b"}}
+      #{"b"}
+      "start")))
 
 (deftest test-breadth-first-all
-  (is (=  #{["start" "A" "b" "A" "c" "A" "end"]
-            ["start" "A" "b" "A" "end"]
-            ["start" "A" "b" "end"]
-            ["start" "A" "c" "A" "b" "A" "end"]
-            ["start" "A" "c" "A" "b" "end"]
-            ["start" "A" "c" "A" "end"]
-            ["start" "A" "end"]
-            ["start" "b" "A" "c" "A" "end"]
-            ["start" "b" "A" "end"]
-            ["start" "b" "end"]}
-          (-> test-data
-              sut/parse
-              sut/to-adj-map
-              sut/breadth-first-all))))
-
-(deftest test-solution-1
-  (are [result tree-config] (= result (sut/solution-1 tree-config))
-    10
-    test-data
-
-    19
-    "dc-end
+  (is (= #{["start" "A" "b" "A" "c" "A" "end"]
+           ["start" "A" "b" "A" "end"]
+           ["start" "A" "b" "end"]
+           ["start" "A" "c" "A" "b" "A" "end"]
+           ["start" "A" "c" "A" "b" "end"]
+           ["start" "A" "c" "A" "end"]
+           ["start" "A" "end"]
+           ["start" "b" "A" "c" "A" "end"]
+           ["start" "b" "A" "end"]
+           ["start" "b" "end"]}
+         (->> test-data
+              (sut/parse)
+              (sut/to-adj-map)
+              (sut/breadth-first-all (sut/->SingleVisitBlockingStrategy))))))
+(def test-data-2
+  "dc-end
 HN-start
 start-kj
 dc-start
@@ -78,10 +76,10 @@ LN-dc
 HN-end
 kj-sa
 kj-HN
-kj-dc"
+kj-dc")
 
-    226
-    "fs-end
+(def test-data-3
+  "fs-end
 he-DX
 fs-he
 start-DX
@@ -98,10 +96,32 @@ start-pj
 he-WI
 zg-he
 pj-fs
-start-RW"))
+start-RW")
+
+(deftest test-solution-1
+  (are [result tree-config] (= result (sut/solution-1 tree-config))
+    10
+    test-data
+
+    19
+    test-data-2
+
+    226
+    test-data-3))
+
+(deftest test-solution-2
+  (are [result tree-config] (= result (sut/solution-2 tree-config))
+    36
+    test-data
+
+    103
+    test-data-2
+
+    3509
+    test-data-3))
 
 (deftest test-part-1
   (is (= 4707 (sut/part-1))))
 
-(deftest ^:kaocha/pending test-part-2
-  (is (= 42 (sut/part-2))))
+(deftest test-part-2
+  (is (= 130493 (sut/part-2))))
