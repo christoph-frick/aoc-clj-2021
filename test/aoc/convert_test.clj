@@ -18,3 +18,10 @@
   (are [result s] (= result (sut/read-array s))
     [1 2 3] "1 2 3"
     [1 2 3] "1,2,3"))
+
+(deftest test-strip-margin
+  (is (= "test
+test
+test" (sut/strip-margin "test
+                        |test
+                        |test"))))

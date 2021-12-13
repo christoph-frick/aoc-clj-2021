@@ -1,6 +1,7 @@
 (ns aoc.convert
   (:require [clojure.string :as str]
-            [clojure.edn :as edn]))
+            [clojure.edn :as edn])
+  (:import [java.util.regex Pattern]))
 
 (defn stol
     "String to long base 10"
@@ -24,3 +25,11 @@
 (defn read-array
   [s]
   (edn/read-string (str "[" s "]")))
+
+(defn strip-margin
+  ([s]
+   (strip-margin s "|"))
+  ([s margin]
+   (str/replace s
+                (re-pattern (str "(?m)^\\p{javaSpaceChar}+" (Pattern/quote margin)))
+                "")))
