@@ -36,6 +36,19 @@
   (let [{:keys [coords instrs]} (parse s)]
     (count (fold coords (first instrs)))))
 
+(defn fmt
+  [coords]
+  (let [[[minx miny] [maxx maxy]] ((juxt first last) (apply sorted-set coords))]
+    (str/join "\n"
+              (for [y (range miny (inc maxy))]
+                (str/join (for [x (range minx (inc maxx))]
+                            (if (contains? coords [x y]) "#" ".")))))))
+
+(defn solution-2
+  [s]
+  (let [{:keys [coords instrs]} (parse s)]
+    (fmt (reduce fold coords instrs))))
+
 (def input "day/13/input.txt")
 
 (defn part-1
@@ -44,4 +57,4 @@
 
 (defn part-2
   []
-  nil)
+  (solution-2 (file/read input)))
