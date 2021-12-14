@@ -1,12 +1,12 @@
 (ns aoc-2021.day-14
   (:require [aoc.file :as file]
             [aoc.convert :as c]
+            [aoc.util :as u]
             [clojure.string :as str]))
 
 (defn parse-rule
   [s]
-  (let [[_ rule replacement] (re-find #"(\w+) -> (\w)" s)]
-    {(vec rule) (first replacement)}))
+  ((u/*** vec first) (str/split s #" -> ")))
 
 (defn parse
   [s]
@@ -37,20 +37,48 @@
        (drop n)
        (first)))
 
-(defn calc-day-1
-  [{:keys [template]}]
-  (let [fs (frequencies template)
-        min (apply min (vals fs))
-        max (apply max (vals fs))]
-    (- max min)))
+(defn calc
+  [fs]
+  (apply - (apply (juxt max min) (vals fs))))
 
 (defn solution-1
   [s]
   (-> s
       (parse)
       (run 10)
-      (calc-day-1)))
+      :template
+      (frequencies)
+      (calc)))
+
+(def pairs (partial partition 2 1))
+
+(defn add
+  [m k n]
+  (update m k (fnil + 0) n))
+
+(defn step-2
+  [rules [counts tuples]]
+  (reduce (fn [[counts tuples] [[a b :as tuple] c]]
+            (let [rule (rules tuple)]
+              [(add counts rule c)
+               (-> tuples
+                   (add [a rule] c)
+                   (add [rule b] c))]))
+          [counts
+           {}]
+          tuples))
+
+(defn run-2
+  [{:keys [rules template]} steps]
+  (u/reduce-times (partial step-2 rules)
+                  [(frequencies template)
+                   (frequencies (pairs template))]
+                  steps))
 
 (defn solution-2
   [s]
-  :TODO)
+  (-> s
+      (parse)
+      (run-2 40)
+      (first)
+      (calc)))

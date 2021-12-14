@@ -43,8 +43,7 @@
     1588 test-input
     3058 input))
 
-(deftest ^:kaocha/pending test-solution-2
+(deftest test-solution-2
   (are [result s] (= result (sut/solution-2 s))
-    :FIXME test-input
-    #_#_
-    :FIXME input))
+    2188189693529 test-input
+    3447389044530 input))
