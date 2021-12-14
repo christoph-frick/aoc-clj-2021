@@ -3,12 +3,14 @@
             [aoc.convert :as c]
             [clojure.string :as str]))
 
-(def input "day/XX/input.txt")
+(defn parse
+    [s]
+    :TODO)
 
-(defn part-1
-  []
-  nil)
+(defn solution-1
+  [s]
+  :TODO)
 
-(defn part-2
-  []
-  nil)
+(defn solution-2
+  [s]
+  :TODO)
