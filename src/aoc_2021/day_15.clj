@@ -41,13 +41,29 @@
         (dists end)
         (let [neighbours (into {}
                                (comp
+                                (map (partial pos/add node))
                                 (filter unvisited)
                                 (map (fn [pos]
                                        [pos (+ (dists node) (coords pos))])))
-                               (pos/neighbours-4 node))
+                               [[1 0] [0 1]])
               dists' (merge-with min dists neighbours)
               unvisited' (disj unvisited node)]
           (recur (first unvisited') unvisited' dists'))))))
+
+(defn times-5
+  [{:keys [width height coords]}]
+  (let [mod10 #(if (> % 9) (- % 9) %)]
+    {:coords (into coords
+                   (for [h (range 5)
+                         w (range 5)
+                         :when (not (= h w 0))
+                         y (range height)
+                         x (range width)
+                         :let [o [x y]
+                               t (pos/add o [(* w width) (* h height)])]]
+                     [t (mod10 (+ h w (coords o)))]))
+     :height (* 5 height)
+     :width (* 5 width)}))
 
 (defn solution-1
   [s]
@@ -57,4 +73,7 @@
 
 (defn solution-2
   [s]
-  :TODO)
+  (-> s
+      (parse)
+      (times-5)
+      (dijkstra)))

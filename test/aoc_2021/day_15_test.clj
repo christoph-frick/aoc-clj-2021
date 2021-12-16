@@ -17,8 +17,21 @@
     40 test-input
     769 input))
 
-(deftest ^:kaocha/pending test-solution-2
+(deftest test-times-5
+  (let [t5 (-> test-input sut/parse sut/times-5)]
+    (is (= {:width 50 :height 50} (select-keys t5 [:width :height])))
+    (is (= (* 50 50) (-> t5 :coords count)))
+    (is (= 9 (-> t5 :coords (get [49 49])))))
+  (is (= [8 9 1 2 3
+          9 1 2 3 4
+          1 2 3 4 5
+          2 3 4 5 6
+          3 4 5 6 7]
+         (->> "8" sut/parse sut/times-5 :coords (into (sorted-map)) vals))))
+
+(deftest test-solution-2
   (are [result s] (= result (sut/solution-2 s))
-    :FIXME test-input
+    315 test-input
     #_#_
-    :FIXME input))
+    ; WRONG!
+    2970 input))
