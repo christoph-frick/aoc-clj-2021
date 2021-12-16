@@ -1,6 +1,7 @@
 (ns aoc-2021.day-16
   (:require [aoc.file :as file]
             [aoc.convert :as c]
+            [aoc.util :as u]
             [clojure.string :as str]
             [clojure.walk :as walk]))
 
@@ -100,17 +101,56 @@
              result)
        s])))
 
-(defn solution-1
-  [s]
+(defn on-node
+  [f]
+  (fn [node]
+    (if (map? node)
+      (f node)
+      node)))
+
+(defn solution
+  [node-fn s]
   (->> s
        hex-to-bin
        parse
        first
-       (walk/postwalk (fn [node]
-                        (if (map? node)
-                          (apply + (get node :version 0) (get node :args ()))
-                          node)))))
+       (walk/postwalk (on-node node-fn))))
+
+(defn sum-version
+  [node]
+  (apply + (get node :version 0) (get node :args ())))
+
+(defn solution-1
+  [s]
+  (solution sum-version s))
+
+(defn to-pred
+  [pred]
+  (fn [a b]
+    (if (pred a b) 1 0)))
+
+(defn to-op
+  [f]
+  (fn
+    [{:keys [args]}]
+    (apply f args)))
+
+(def ops
+  (into
+   {4 :literal}
+   (map (u/*** identity to-op))
+   {0 +
+    1 *
+    2 min
+    3 max
+    5 (to-pred >)
+    6 (to-pred <)
+    7 (to-pred =)}))
+
+(defn op-dispatch
+  [{:keys [type] :as node}]
+  ((ops type) node))
 
 (defn solution-2
   [s]
-  :TODO)
+  (solution op-dispatch s))

@@ -99,7 +99,14 @@
     31 "A0016C880162017C3686B18A3D4780"
     993 input))
 
-#_(deftest ^:kaocha/pending test-solution-2
+(deftest test-solution-2
   (are [result s] (= result (sut/solution-2 s))
-    #_#_
-    :FIXME input))
+    3 "C200B40A82"
+    54 "04005AC33890"
+    7 "880086C3E88112"
+    9 "CE00C43D881120"
+    1 "D8005AC2A8F0"
+    0 "F600BC2D8F"
+    0 "9C005AC2F8F0"
+    1 "9C0141080250320F1802104A08"
+    144595909277 input))
